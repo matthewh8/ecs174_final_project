@@ -18,7 +18,6 @@ python -m venv venv
 On macOS/Linux:
 ```bash
 # Create virtual environment
-python -m venv venv
 python3 -m venv venv
 
 # Activate virtual environment
