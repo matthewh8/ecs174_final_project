@@ -9,7 +9,7 @@ This project implements multiple deep learning models to classify tomato leaf di
 On Windows:
 ```bash
 # Create virtual environment
-python -m venv venv
+py -m venv venv
 
 # Activate virtual environment
 .\venv\Scripts\activate
