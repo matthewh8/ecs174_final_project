@@ -24,7 +24,7 @@ source venv/bin/activate
 
 ### 2. Install Dependencies
 ```bash
-pip install -r requirements.txt
+pip install tensorflow pillow matplotlib numpy gdown pathlib
 ```
 
 ### 3. Project Structure
