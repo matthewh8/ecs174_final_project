@@ -10,7 +10,6 @@ On Windows:
 ```bash
 # Create virtual environment
 py -m venv venv
-
 # Activate virtual environment
 .\venv\Scripts\activate
 ```
@@ -19,42 +18,25 @@ On macOS/Linux:
 ```bash
 # Create virtual environment
 python3 -m venv venv
-
 # Activate virtual environment
 source venv/bin/activate
 ```
 
 ### 2. Install Dependencies
-
 ```bash
-pip install tensorflow pillow matplotlib numpy gdown pathlib
+pip install -r requirements.txt
 ```
 
-### 3. Kaggle Authentication Setup
-
-1. Create a Kaggle account if you don't have one
-2. Go to your Kaggle account settings (https://www.kaggle.com/account)
-3. Click on "Create New API Token"
-4. Download the `kaggle.json` file
-5. Create the `.kaggle` directory:
-   - Windows: `mkdir %USERPROFILE%\.kaggle`
-   - macOS/Linux: `mkdir ~/.kaggle`
-6. Move the downloaded `kaggle.json` to the `.kaggle` directory
-7. Set appropriate permissions (macOS/Linux only):
-   ```bash
-   chmod 600 ~/.kaggle/kaggle.json
-   ```
-
-### 4. Project Structure
-
+### 3. Project Structure
 ```
 tomato-disease-classification/
 ├── venv/
-├── models.py               # Contains model implementations
-├── model_results.json      # Training results and metrics
-├── model_comparison.png    # Performance comparison plots
-├── README.md
-└── trained_models/        # Directory containing saved models
+├── models/                 # Directory containing saved model files
+├── plots/                 # Training visualizations and comparisons
+├── results/              # JSON files with training metrics
+├── corrupted_images/     # Any corrupted images found during verification
+├── main.py              # Main script with model implementations
+└── README.md
 ```
 
 ## Running the Project
@@ -62,11 +44,12 @@ tomato-disease-classification/
 1. Make sure your virtual environment is activated
 2. Run the main script:
 ```bash
-python models.py
+python main.py
 ```
 
 The script will:
-- Download the dataset from Kaggle automatically
+- Download the dataset from Google Drive automatically
+- Verify image integrity and handle corrupted images
 - Train three different models:
   - Basic CNN
   - ResNet50V2 (transfer learning)
@@ -77,18 +60,35 @@ The script will:
 
 ## Output Files
 
-The script generates several files:
-- `model_comparison.png`: Visual comparison of model performance
-- `model_results.json`: Detailed metrics for each model
-- Saved model files:
-  - `tomato_disease_basic_cnn.keras`
-  - `tomato_disease_resnet50v2.keras`
-  - `tomato_disease_efficientnetb0.keras`
+The script generates several files with timestamps:
+
+- `plots/model_comparison_[timestamp].png`: Visual comparison of model performance
+- `results/model_results_[timestamp].json`: Detailed metrics for each model
+- Saved model files in the `models/` directory:
+  - `tomato_disease_basic_cnn_[timestamp].keras`
+  - `tomato_disease_resnet50v2_[timestamp].keras`
+  - `tomato_disease_efficientnetb0_[timestamp].keras`
 
 ## Dataset
 
-The project uses the "Tomato Disease Multiple Sources" dataset from Kaggle:
-https://www.kaggle.com/datasets/cookiefinder/tomato-disease-multiple-sources
+The dataset will be automatically downloaded from Google Drive when running the script. The download process includes:
+- Automatic download handling using `gdown`
+- Image verification to detect and handle corrupted files
+- Directory structure creation
+- Dataset extraction
+
+## Features
+
+- Image integrity verification
+- Automatic dataset download and extraction
+- Multiple model architectures:
+  - Custom CNN with batch normalization
+  - Transfer learning with ResNet50V2
+  - Transfer learning with EfficientNetB0
+- Data augmentation for training
+- Early stopping and model checkpointing
+- Comprehensive performance comparison
+- Automated results logging
 
 ## System Requirements
 
@@ -97,19 +97,55 @@ https://www.kaggle.com/datasets/cookiefinder/tomato-disease-multiple-sources
 - NVIDIA GPU recommended but not required
 - Internet connection for downloading the dataset
 
+## Model Architecture Details
+
+### Basic CNN
+- Three convolutional blocks with batch normalization
+- Global average pooling
+- Dense layers with dropout for regularization
+
+### Transfer Learning Models
+- Pre-trained ResNet50V2 and EfficientNetB0 base
+- Custom top layers for classification
+- Frozen pre-trained weights
+- Dropout for regularization
+
 ## Troubleshooting
 
 1. If you encounter memory issues:
-   - Reduce batch_size in the code
-   - Use a smaller input image size
-   - Run on a machine with more RAM
+   - Reduce `batch_size` (default is 32)
+   - Reduce input shape (default is 128x128)
+   - Free up system memory
+   - Use a machine with more RAM
 
-2. If Kaggle authentication fails:
-   - Verify your `kaggle.json` file is in the correct location
-   - Check file permissions
-   - Ensure you're using a valid API token
+2. For download issues:
+   - Check your internet connection
+   - Verify the Google Drive file ID is still valid
+   - Try downloading the dataset manually and place in the correct directory structure
 
 3. For GPU-related issues:
-   - Verify TensorFlow can see your GPU
+   - Verify TensorFlow can access your GPU
    - Update GPU drivers
    - Check CUDA and cuDNN compatibility with your TensorFlow version
+
+4. For corrupted images:
+   - Check the `corrupted_images` directory for any files that were moved
+   - Verify the integrity of the downloaded dataset
+   - Try re-downloading the dataset
+
+## Performance Monitoring
+
+The training process includes:
+- Real-time accuracy and loss monitoring
+- Automatic early stopping to prevent overfitting
+- Model checkpointing to save the best weights
+- Comprehensive performance comparison plots
+- Detailed JSON logs of training metrics
+
+## Future Improvements
+
+- Implement cross-validation
+- Add model ensemble capabilities
+- Expand to more disease classes
+- Add prediction visualization tools
+- Implement gradual unfreezing for transfer learning models
