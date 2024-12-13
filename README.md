@@ -27,7 +27,7 @@ source venv/bin/activate
 ### 2. Install Dependencies
 
 ```bash
-pip install tensorflow kaggle pandas numpy pillow matplotlib
+pip install tensorflow pillow matplotlib numpy gdown pathlib
 ```
 
 ### 3. Kaggle Authentication Setup
